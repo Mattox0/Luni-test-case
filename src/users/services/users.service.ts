@@ -115,8 +115,6 @@ export class UsersService {
       ),
     ];
 
-    console.log('seriesIds', seriesIds);
-
     for (const seriesId of seriesIds) {
       const series = this.seriesStore.findSeriesById(seriesId);
 
@@ -126,8 +124,6 @@ export class UsersService {
         );
         return (entry?.completedPercent ?? 0) < 80;
       });
-
-      console.log('next entry', next);
 
       if (!next) continue;
 
