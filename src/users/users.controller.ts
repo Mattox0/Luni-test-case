@@ -29,10 +29,12 @@ export class UsersController {
   }
 
   @Post('unlock-batch')
-  unlockBatch(
-    @Param('userId') userId: string,
-    @Body() body: UnlockBatchDto,
-  ) {
+  unlockBatch(@Param('userId') userId: string, @Body() body: UnlockBatchDto) {
     return this.usersService.unlockBatch(userId, body.seriesId);
+  }
+
+  @Get('next')
+  getNextEpisodes(@Param('userId') userId: string) {
+    return this.usersService.getNextEpisodes(userId);
   }
 }

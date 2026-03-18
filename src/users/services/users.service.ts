@@ -7,6 +7,10 @@ import { DomainError } from '../../common/errors/app.errors';
 import { UnlockResponseDto } from '../dto/responses/unlock-response.dto';
 import { UnlockBatchResponseDto } from '../dto/responses/unlock-batch-response.dto';
 import { BATCH_PRICE_PER_EPISODE } from '../../pricing/services/pricing.service';
+import {
+  NextEpisodeResponseDto,
+  NextSeriesDto,
+} from '../dto/responses/next-episode-response.dto';
 
 @Injectable()
 export class UsersService {
@@ -91,5 +95,59 @@ export class UsersService {
       totalCost,
       newBalance: updatedUser.coinBalance,
     };
+  }
+
+  getNextEpisodes(userId: string): NextEpisodeResponseDto {
+    const user = this.userStore.findUserById(userId);
+    const nextEpisodes: NextSeriesDto[] = [];
+
+    const activityEpisodeIds = [
+      ...user.watchHistory.map((watchHistory) => watchHistory.episodeId),
+      ...user.unlockedEpisodes,
+    ];
+
+    // Set to avoid duplicates when user has multiple episodes in the same series
+    const seriesIds = [
+      ...new Set(
+        activityEpisodeIds.map(
+          (id) => this.seriesStore.findEpisodeById(id).seriesId,
+        ),
+      ),
+    ];
+
+    console.log('seriesIds', seriesIds);
+
+    for (const seriesId of seriesIds) {
+      const series = this.seriesStore.findSeriesById(seriesId);
+
+      const next = series.episodes.find((episode) => {
+        const entry = user.watchHistory.find(
+          (watchHistory) => watchHistory.episodeId === episode.id,
+        );
+        return (entry?.completedPercent ?? 0) < 80;
+      });
+
+      console.log('next entry', next);
+
+      if (!next) continue;
+
+      const entry = user.watchHistory.find(
+        (watchHistory) => watchHistory.episodeId === next.id,
+      );
+
+      nextEpisodes.push({
+        seriesId: series.id,
+        seriesTitle: series.title,
+        episode: {
+          episodeId: next.id,
+          number: next.number,
+          title: next.title,
+          status: this.seriesStore.getEpisodeStatus(next, user),
+          completedPercent: entry?.completedPercent ?? 0,
+        },
+      });
+    }
+
+    return { nextEpisodes };
   }
 }

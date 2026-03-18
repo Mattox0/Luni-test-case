@@ -31,6 +31,10 @@ export class SeriesStore implements OnModuleInit {
     }
   }
 
+  getAllSeries(): Series[] {
+    return [...this.seriesMap.values()];
+  }
+
   findSeriesById(seriesId: string): Series {
     const series = this.seriesMap.get(seriesId);
     if (!series) throw DomainError.seriesNotFound(seriesId);
