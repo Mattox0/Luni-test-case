@@ -27,7 +27,5 @@ export class SeriesStore implements OnModuleInit {
         this.episodesMap.set(episode.id, { ...episode, seriesId: series.id });
       }
     }
-
-    console.log(this.seriesMap, this.episodesMap);
   }
 }

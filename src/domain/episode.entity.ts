@@ -3,6 +3,12 @@ export enum Tier {
   PREMIUM = 'premium',
 }
 
+export enum EpisodeStatus {
+  FREE = 'free',
+  UNLOCKED = 'unlocked',
+  LOCKED = 'locked',
+}
+
 export interface Episode {
   id: string;
   seriesId: string;
