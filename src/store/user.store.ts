@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { User } from '../domain/user.entity';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { DomainError } from '../common/errors/app.errors';
 
 interface UsersData {
   users: User[];
@@ -21,5 +22,11 @@ export class UserStore implements OnModuleInit {
     for (const user of data.users) {
       this.usersMap.set(user.id, user);
     }
+  }
+
+  findUserById(userId: string): User {
+    const user = this.usersMap.get(userId);
+    if (!user) throw DomainError.userNotFound(userId);
+    return user;
   }
 }
