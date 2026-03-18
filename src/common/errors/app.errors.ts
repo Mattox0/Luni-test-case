@@ -4,12 +4,18 @@ export enum DomainErrorCode {
   EPISODE_NOT_FOUND = 'EPISODE_NOT_FOUND',
   SERIES_NOT_FOUND = 'SERIES_NOT_FOUND',
   USER_NOT_FOUND = 'USER_NOT_FOUND',
+  ALREADY_UNLOCKED = 'ALREADY_UNLOCKED',
+  INSUFFICIENT_BALANCE = 'INSUFFICIENT_BALANCE',
+  PREREQUISITE_NOT_MET = 'PREREQUISITE_NOT_MET',
 }
 
 export const HTTP_STATUS_MAP: Record<DomainErrorCode, HttpStatus> = {
   [DomainErrorCode.EPISODE_NOT_FOUND]: HttpStatus.NOT_FOUND,
   [DomainErrorCode.SERIES_NOT_FOUND]: HttpStatus.NOT_FOUND,
   [DomainErrorCode.USER_NOT_FOUND]: HttpStatus.NOT_FOUND,
+  [DomainErrorCode.ALREADY_UNLOCKED]: HttpStatus.CONFLICT,
+  [DomainErrorCode.INSUFFICIENT_BALANCE]: HttpStatus.PAYMENT_REQUIRED,
+  [DomainErrorCode.PREREQUISITE_NOT_MET]: HttpStatus.UNPROCESSABLE_ENTITY,
 };
 
 export class DomainError extends Error {
@@ -39,6 +45,27 @@ export class DomainError extends Error {
     return new DomainError(
       DomainErrorCode.USER_NOT_FOUND,
       `User not found: ${userId}`,
+    );
+  }
+
+  static alreadyUnlocked(episodeId: string): DomainError {
+    return new DomainError(
+      DomainErrorCode.ALREADY_UNLOCKED,
+      `Episode already unlocked: ${episodeId}`,
+    );
+  }
+
+  static insufficientBalance(balance: number, cost: number): DomainError {
+    return new DomainError(
+      DomainErrorCode.INSUFFICIENT_BALANCE,
+      `Insufficient balance: have ${balance}, need ${cost}`,
+    );
+  }
+
+  static prerequisiteNotMet(episodeId: string): DomainError {
+    return new DomainError(
+      DomainErrorCode.PREREQUISITE_NOT_MET,
+      `Previous episodes must be unlocked before: ${episodeId}`,
     );
   }
 }

@@ -41,6 +41,12 @@ export class SeriesStore implements OnModuleInit {
     return this.findSeriesById(seriesId).episodes;
   }
 
+  findEpisodeById(episodeId: string): Episode {
+    const episode = this.episodesMap.get(episodeId);
+    if (!episode) throw DomainError.episodeNotFound(episodeId);
+    return episode;
+  }
+
   getEpisodeStatus(episode: Episode, user: User): EpisodeStatus {
     if (episode.tier === Tier.FREE) {
       return EpisodeStatus.FREE;

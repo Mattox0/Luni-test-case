@@ -29,4 +29,11 @@ export class UserStore implements OnModuleInit {
     if (!user) throw DomainError.userNotFound(userId);
     return user;
   }
+
+  debitUser(userId: string, cost: number, episodeId: string): User {
+    const user = this.findUserById(userId);
+    user.coinBalance -= cost;
+    user.unlockedEpisodes.push(episodeId);
+    return user;
+  }
 }
