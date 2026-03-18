@@ -36,4 +36,15 @@ export class UserStore implements OnModuleInit {
     user.unlockedEpisodes.push(episodeId);
     return user;
   }
+
+  debitUserBatch(
+    userId: string,
+    totalCost: number,
+    episodeIds: string[],
+  ): User {
+    const user = this.findUserById(userId);
+    user.coinBalance -= totalCost;
+    user.unlockedEpisodes.push(...episodeIds);
+    return user;
+  }
 }

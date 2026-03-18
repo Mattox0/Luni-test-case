@@ -7,6 +7,7 @@ export enum DomainErrorCode {
   ALREADY_UNLOCKED = 'ALREADY_UNLOCKED',
   INSUFFICIENT_BALANCE = 'INSUFFICIENT_BALANCE',
   PREREQUISITE_NOT_MET = 'PREREQUISITE_NOT_MET',
+  NO_EPISODES_TO_UNLOCK = 'NO_EPISODES_TO_UNLOCK',
 }
 
 export const HTTP_STATUS_MAP: Record<DomainErrorCode, HttpStatus> = {
@@ -16,6 +17,7 @@ export const HTTP_STATUS_MAP: Record<DomainErrorCode, HttpStatus> = {
   [DomainErrorCode.ALREADY_UNLOCKED]: HttpStatus.CONFLICT,
   [DomainErrorCode.INSUFFICIENT_BALANCE]: HttpStatus.PAYMENT_REQUIRED,
   [DomainErrorCode.PREREQUISITE_NOT_MET]: HttpStatus.UNPROCESSABLE_ENTITY,
+  [DomainErrorCode.NO_EPISODES_TO_UNLOCK]: HttpStatus.CONFLICT,
 };
 
 export class DomainError extends Error {
@@ -59,6 +61,13 @@ export class DomainError extends Error {
     return new DomainError(
       DomainErrorCode.INSUFFICIENT_BALANCE,
       `Insufficient balance: have ${balance}, need ${cost}`,
+    );
+  }
+
+  static noEpisodesToUnlock(seriesId: string): DomainError {
+    return new DomainError(
+      DomainErrorCode.NO_EPISODES_TO_UNLOCK,
+      `No premium episodes to unlock in series: ${seriesId}`,
     );
   }
 

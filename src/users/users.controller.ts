@@ -3,6 +3,7 @@ import { SeriesService } from '../series/services/series.service';
 import { FeedResponseDto } from './dto/responses/feed-response.dto';
 import { UsersService } from './services/users.service';
 import { UnlockEpisodeDto } from './dto/requests/unlock-episode.dto';
+import { UnlockBatchDto } from './dto/requests/unlock-batch.dto';
 
 @Controller('users/:userId')
 export class UsersController {
@@ -25,5 +26,13 @@ export class UsersController {
     @Body() body: UnlockEpisodeDto,
   ) {
     return this.usersService.unlockEpisode(userId, body.episodeId);
+  }
+
+  @Post('unlock-batch')
+  unlockBatch(
+    @Param('userId') userId: string,
+    @Body() body: UnlockBatchDto,
+  ) {
+    return this.usersService.unlockBatch(userId, body.seriesId);
   }
 }
