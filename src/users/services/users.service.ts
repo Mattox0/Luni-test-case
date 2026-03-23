@@ -59,11 +59,7 @@ export class UsersService {
     };
   }
 
-  unlockBatch(
-    userId: string,
-    seriesId: string,
-    domainError: DomainError = DomainError.noEpisodesToUnlock(seriesId),
-  ): UnlockBatchResponseDto {
+  unlockBatch(userId: string, seriesId: string): UnlockBatchResponseDto {
     const user = this.userStore.findUserById(userId);
     const episodes = this.seriesStore.findEpisodesBySeriesId(seriesId);
 
@@ -74,7 +70,7 @@ export class UsersService {
     );
 
     if (toUnlock.length === 0) {
-      throw domainError;
+      throw DomainError.noEpisodesToUnlock(seriesId);
     }
 
     const totalCost = this.pricingService.getBatchCost(toUnlock.length);
